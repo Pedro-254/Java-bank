@@ -1,4 +1,4 @@
-package banco_bttr;
+package banco;
 
 public class Pessoa {
     String nome;

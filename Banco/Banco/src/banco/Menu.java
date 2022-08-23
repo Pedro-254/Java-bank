@@ -1,8 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package banco_bttr;
+package banco;
 
 import java.io.BufferedWriter;
 import java.util.concurrent.ThreadLocalRandom;
@@ -28,6 +24,7 @@ public class Menu {
     }
 
     public static boolean opt(int p) throws IOException {
+        limpar();
         switch (p) {
             case 0:
                 return false;
@@ -37,11 +34,12 @@ public class Menu {
             case 2:
                 depositar_sacar(1);
                 return true;
-
             case 3:
                 depositar_sacar(-1);
                 return true;
-
+            case 4:
+                gerar_extrato();
+                return true;
             case 5:
                 deletar_conta();
                 return true;
@@ -77,7 +75,7 @@ public class Menu {
 
         id = gerar_id();
 
-        File arquivo = new File("../Usuarios/" + nome + "_" + id + ".txt");
+        File arquivo = new File("./Usuarios/" + nome + "_" + id + ".txt");
         arquivo.createNewFile();
 
         BufferedWriter writer;
@@ -134,11 +132,11 @@ public class Menu {
 
             File f = new File("./Usuarios/" + nome + "_" + id + ".txt");
             Scanner in = new Scanner(new FileReader(f));
-
             String txt = "";
             for (int i = 0; i < 3; i++) {
                 txt += in.nextLine() + "\n";
             }
+
             String txt_valor = in.nextLine();
             txt_valor = txt_valor.substring(9, txt_valor.length());
             valor = Double.parseDouble(txt_valor) + valor;
@@ -184,6 +182,23 @@ public class Menu {
                 file.delete();
             }
         }
+    }
+
+    public static void gerar_extrato() throws IOException {
+        if (verificar_dados()) {
+            limpar();
+            File f = new File("./Usuarios/" + nome + "_" + id + ".txt");
+            Scanner in = new Scanner(new FileReader(f));
+            String txt = "";
+            for (int i = 0; i < 4; i++) {
+                txt += in.nextLine() + "\n";
+            }
+            System.out.println(txt);
+            System.out.println("Digite 0 para voltar ao menu.");
+            s = new Scanner(System.in);
+            String pausa = s.next();
+        }
+
     }
 
     public static void deletar_conta() throws IOException {

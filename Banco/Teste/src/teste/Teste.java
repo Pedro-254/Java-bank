@@ -16,13 +16,8 @@ public class Teste {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Random gerador = new Random();
-
-        int numero = gerador.nextInt();
-        System.out.println(numero);
-
-        String teste = Integer.toString(numero);
-        System.out.println(teste);
+        String cpf = "12345678900";
+        System.out.println(cpf.substring(0,8));
     }
 
 }
