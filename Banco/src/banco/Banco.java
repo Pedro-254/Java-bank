@@ -9,11 +9,11 @@ public class Banco {
         boolean cont = true;
         while (cont){
 //            Menu menu = new Menu();
-            new_Menu menu = new new_Menu();
+            Menu menu = new Menu();
             menu.print();
 
             Scanner s = new Scanner(System.in);
-            cont =  new_Menu.opt(s.nextInt());
+            cont =  Menu.opt(s.nextInt());
         } 
 
     }
