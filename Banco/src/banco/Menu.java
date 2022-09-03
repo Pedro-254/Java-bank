@@ -49,73 +49,110 @@ public class Menu {
     }
 
 //  Variaveis globais
-    public static String id = "";
+    public static String cpf = "";
     public static String nome = "";
     public static Scanner s = new Scanner("");
 
 //  Gerar novo id
-    public static String gerar_id() {
-        int rand_int = ThreadLocalRandom.current().nextInt(100000, 999999 + 1);
-
-        id = Integer.toString(rand_int);
-
-        return id;
-    }
-
+//    public static String gerar_id() {
+//        int rand_int = ThreadLocalRandom.current().nextInt(100000, 999999 + 1);
+//
+//        id = Integer.toString(rand_int);
+//
+//        return id;
+//    }
 //  Função para criar uma nova conta
     public static void criar_conta() throws IOException {
 
+        System.out.println("Digite seu CPF:");
+        s = new Scanner(System.in);
+        cpf = s.next().replace(".", "").replace("-", "");
+
         System.out.println("Digite seu nome:");
-        Scanner s = new Scanner(System.in);
+        s = new Scanner(System.in);
         nome = s.next();
 
         System.out.println("Digite sua senha:");
         s = new Scanner(System.in);
         String senha = s.next();
 
-        id = gerar_id();
-
-        File arquivo = new File("./Usuarios/" + nome + "_" + id + ".txt");
+        File arquivo = new File("./Usuarios/" + cpf + ".txt");
         arquivo.createNewFile();
 
         BufferedWriter writer;
         writer = new BufferedWriter(new FileWriter(arquivo, true));
-        writer.append("Id: " + id + "\n");
+        writer.append("Cpf: " + cpf + "\n");
         writer.append("Nome: " + nome + "\n");
         writer.append("Senha: " + senha + "\n");
         writer.append("Saldo: R$ 0.00\n");
         writer.close();
     }
 
-//  Função que identifica e verifica os dados fornecidos pelo cliente
-    public static boolean verificar_dados() throws IOException {
-        s = new Scanner("");
+    public static boolean validar_cpf(String cpf) throws IOException {
 
+        if (cpf.length() == 11) {
+            String[] part = cpf.split("");
+            int num = 0;
+            for (int i = 10; i > 1; i--) {
+                for (int j = 0; j < 9; j++) {
+                    num += Integer.parseInt(part[j]) * i;
+                }
+            }
+            num *= 10;
+            num %= 11;
+
+            if (num == Integer.parseInt(part[9])) {
+                return true;
+            }
+        }
+        return false;
+    }
+    //  Função que identifica e verifica os dados fornecidos pelo cliente
+
+    public static boolean verificar_dados() throws IOException {
+        limpar();
+
+//      Verificar cpf
+        System.out.println("Digite seu Cpf:");
+        s = new Scanner(System.in);
+        cpf = s.next().replace(".", "").replace("-", "");
+
+        File f = new File("./Usuarios/" + cpf + ".txt");
+        if (f.exists() == false) {
+            System.out.println("Cpf não encontrados.");
+            return false;
+        }
+//      Verificar nome
         System.out.println("Digite seu nome:");
         s = new Scanner(System.in);
         nome = s.next();
-
-        System.out.println("Digite seu id:");
-        s = new Scanner(System.in);
-        id = s.next();
-
-        File f = new File("./Usuarios/" + nome + "_" + id + ".txt");
-        if (f.exists() == false) {
-            System.out.println("Nome ou Id não encontrados.");
+        Scanner in = new Scanner(new FileReader(f));
+        String arq_nome = in.nextLine();
+        arq_nome = in.nextLine();
+        arq_nome = arq_nome.substring(6, arq_nome.length());
+        if (nome.equals(arq_nome) == false) {
+            System.err.println(arq_nome);
+            System.out.println("Nome invalido.");
             return false;
-        } else {
-            Scanner in = new Scanner(new FileReader(f));
-            String line = "";
-            for (int i = 0; i < 3; i++) {
-                line = in.nextLine();
-            }
-
-            String senha_file = line.substring(7, line.length());
-            System.out.println("Digite sua senha:");
-            s = new Scanner(System.in);
-            String senha = s.next();
-            return senha.equals(senha_file);
         }
+
+//      Verificar senha
+        in = new Scanner(new FileReader(f));
+        String line = "";
+        for (int i = 0; i < 3; i++) {
+            line = in.nextLine();
+        }
+
+        String senha_file = line.substring(7, line.length());
+        System.out.println("Digite sua senha:");
+        s = new Scanner(System.in);
+        String senha = s.next();
+        if (senha.equals(senha_file) == false) {
+            System.out.println("Senha incorreta.");
+            return false;
+        }
+
+        return true;
     }
 
 //  Função para depositar uma quantia
@@ -130,7 +167,7 @@ public class Menu {
             s = new Scanner(System.in);
             double valor = s.nextDouble() * type;
 
-            File f = new File("./Usuarios/" + nome + "_" + id + ".txt");
+            File f = new File("./Usuarios/" + cpf + ".txt");
             Scanner in = new Scanner(new FileReader(f));
             String txt = "";
             for (int i = 0; i < 3; i++) {
@@ -149,11 +186,27 @@ public class Menu {
                 writer.write(txt);
                 writer.close();
             } else {
+                limpar();
                 System.out.println("Valor para saque invalido.");
+                System.out.println("0 - Menu \n1 - Tentar novamente");
+                s = new Scanner(System.in);
+                int opt = s.nextInt();
+                switch (opt) {
+                    case 0:
+                        Menu menu = new Menu();
+                        menu.print();
+                        break;
+                    case 1:
+                        verificar_dados();
+                        break;
+                    default:
+                        throw new AssertionError();
+                }
             }
 
         } else {
-            System.out.println("0 - Menu \n 1 - Tentar novamente");
+            limpar();
+            System.out.println("0 - Menu \n1 - Tentar novamente");
             s = new Scanner(System.in);
             int opt = s.nextInt();
             switch (opt) {
@@ -187,13 +240,15 @@ public class Menu {
     public static void gerar_extrato() throws IOException {
         if (verificar_dados()) {
             limpar();
-            File f = new File("./Usuarios/" + nome + "_" + id + ".txt");
+            File f = new File("./Usuarios/" + cpf + ".txt");
             Scanner in = new Scanner(new FileReader(f));
             String txt = "";
             for (int i = 0; i < 4; i++) {
                 txt += in.nextLine() + "\n";
             }
-            System.out.println(txt);
+            System.out.println("__________________");
+            System.out.print(txt);
+            System.out.println("__________________");
             System.out.println("Digite 0 para voltar ao menu.");
             s = new Scanner(System.in);
             String pausa = s.next();
@@ -203,8 +258,8 @@ public class Menu {
 
     public static void deletar_conta() throws IOException {
         if (verificar_dados()) {
-            File f = new File("./Usuarios/" + nome + "_" + id + ".txt");
-            System.out.println(nome + "_" + id + ".txt");
+            File f = new File("./Usuarios/" + cpf + ".txt");
+            System.out.println(cpf + ".txt");
 //            Path path = Paths.get("../Usuarios/" + nome + "_" + id + ".txt");
             System.out.println("Sua conta sera deletada. \n 1 - Confirmar \n 2 - Negar");
             s = new Scanner(System.in);

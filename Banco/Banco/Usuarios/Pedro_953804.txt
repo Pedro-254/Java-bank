@@ -1,4 +1,0 @@
-Id: 953804
-Nome: Pedro
-Senha: 123
-Saldo: R$ 0.00

@@ -1,4 +1,0 @@
-Cpf: 51777047853
-Nome: Ro
-Senha: 123
-Saldo: R$ 0.00
