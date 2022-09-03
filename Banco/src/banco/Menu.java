@@ -1,12 +1,10 @@
 package banco;
 
 import java.io.BufferedWriter;
-import java.util.concurrent.ThreadLocalRandom;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.*;
 import java.util.Scanner;
 
 public class Menu {
