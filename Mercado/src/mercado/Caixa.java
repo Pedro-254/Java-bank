@@ -5,10 +5,11 @@
 package mercado;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.ArrayList;
 
 /**
  *
@@ -17,7 +18,6 @@ import java.util.Scanner;
 public class Caixa {
 
     private double dinheiro;
-
     public void setDinheiro(double dinheiro) {
         this.dinheiro = dinheiro;
     }
@@ -27,14 +27,19 @@ public class Caixa {
     }
 
     public void depositar(double valor) throws IOException {
-        setDinheiro(valor);
+        setDinheiro(dinheiro + valor);
     }
 
-    public void abrir_caixa() throws FileNotFoundException, IOException {
-        File f = new File("./data/caixa_de_dinheiro.txt");
+    public void abrir_caixa() throws IOException{
+        File f = new File("caixa_de_dinheiro.txt");
         if (f.exists() == false) {
-            f.createNewFile();
-        } else {
+            boolean success = f.createNewFile();
+            FileWriter w = new FileWriter("caixa_de_dinheiro.txt");
+            String str = Double.toString(0.0);
+            w.write(str);
+            setDinheiro(0.0);
+        }
+        else {
             Scanner read = new Scanner(new FileReader(f));
             String valor_str = read.nextLine();
             Double valor = Double.parseDouble(valor_str);
@@ -42,7 +47,10 @@ public class Caixa {
         }
     }
 
-    public void fechar_caixa() {
-
+    public void fechar_caixa() throws IOException {
+        FileWriter w = new FileWriter("caixa_de_dinheiro.txt");
+        String str = Double.toString(getDinheiro());
+        w.write(str);
+        w.close();
     }
 }
